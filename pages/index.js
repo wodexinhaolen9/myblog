@@ -5,22 +5,23 @@ import { GraphQLClient, gql } from 'graphql-request'
 
 const client = new GraphQLClient("https://api-ap-northeast-1.hygraph.com/v2/cl6lsx6ia0y7l01ulhpjshdti/master")
 const QUERY = gql`{
-  posts{
-    id,
-    title,
-    category,
-    description,
-    content{
+  posts {
+    id
+    title
+    datePublished
+    category
+    description
+    content {
       html
-    },
-    time,
-    author{
-      name,
-      avatar{
+    }
+    time
+    author {
+      name
+      avatar {
         url
       }
     }
-    coverImg{
+    coverImg {
       url
     }
   }
@@ -32,12 +33,13 @@ export async function getStaticProps () {
   return {
     props: {
       posts
-    }
+    },
+    revalidate: 10,
   }
 }
 
-export default function Home (posts) {
-  console.log('posts', posts)
+export default function Home ({ posts }) {
+
   return (
     <div className={styles.container}>
       <Head>
@@ -70,74 +72,35 @@ export default function Home (posts) {
           </div>
         </div>
         <div className="blog-header-container">
-          <div className="blog-header">
-            <div className="blog-article header-article">
-              <div className="blog-big__title">Esteem</div>
-              <div className="blog-menu small-title date">12.06.2021</div>
-            </div>
-            <div className="blog-article">
-              <img src="https://images.unsplash.com/photo-1496629062893-b0f566065d44?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MjV8fGJsYWNrJTIwYW5kJTIwd2hpdGV8ZW58MHwwfDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="" />
-              <h2>Sharing The <span>Widespread</span> Acclaim About Motivation</h2>
-              <div className="blog-detail">
-                <span>By Richard Carnation</span>
-                <span>5 Min Read</span>
-              </div>
-              // eslint-disable-next-line react/no-unescaped-entities
-              <p>Blonde received widespread acclaim, with critics praising Ocean's introspective lyrics and the album's unconventional</p>
-              <a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-corner-down-right" viewBox="0 0 24 24">
-                  <path d="M15 10l5 5-5 5" />
-                  <path d="M4 4v7a4 4 0 004 4h12" />
-                </svg>
-                See More
-              </a>
-            </div>
-          </div>
-          <div className="blog-header">
-            <div className="blog-article header-article">
-              <div className="blog-big__title">Love</div>
-              <div className="blog-menu small-title date">12.06.2021</div>
-            </div>
-            <div className="blog-article">
-              <img src="https://images.unsplash.com/photo-1529255484355-cb73c33c04bb?ixid=MnwxMjA3fDB8MHxzZWFyY2h8OTh8fGJsYWNrJTIwYW5kJTIwd2hpdGV8ZW58MHwwfDB8fA%3D%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="" />
-              <h2>Talking About <span>Vulnerability</span> During Quarantine</h2>
-              <div className="blog-detail">
-                <span>By Tom Hiddleston</span>
-                <span>5 Min Read</span>
-              </div>
-              <p>Having traveled to Turkey multiple times, with critics praising Ocean's introspective lyrics and the album's unconventional</p>
-              <a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-corner-down-right" viewBox="0 0 24 24">
-                  <path d="M15 10l5 5-5 5" />
-                  <path d="M4 4v7a4 4 0 004 4h12" />
-                </svg>
-                See More
-              </a>
-            </div>
-          </div>
-          <div className="blog-header">
-            <div className="blog-article header-article">
-              <div className="blog-big__title">Control</div>
-              <div className="blog-menu small-title date">12.06.2021</div>
-            </div>
-            <div className="blog-article">
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src="https://images.unsplash.com/photo-1616248249518-b16013cd4e42?ixid=MnwxMjA3fDB8MHxzZWFyY2h8MTkzfHxibGFjayUyMGFuZCUyMHdoaXRlfGVufDB8MHwwfHw%3D&ixlib=rb-1.2.1&auto=format&fit=crop&w=500&q=60" alt="" />
-              <h2>How 2020 Changed <span>Understanding</span> Of Mental Health</h2>
-              <div className="blog-detail">
-                <span>By Scarlett Witch</span>
-                <span>5 Min Read</span>
-              </div>
-              <p>Time is defines ad the indefinete continued progress, with critics praising Ocean's introspective lyrics and the album's</p>
-              <a href="#">
-                <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-corner-down-right" viewBox="0 0 24 24">
-                  <path d="M15 10l5 5-5 5" />
-                  <path d="M4 4v7a4 4 0 004 4h12" />
-                </svg>
-                See More
-              </a>
-            </div>
-          </div>
+          {posts.map((post) => {
+            return (
+              <div className="blog-header" key={post.id}>
+                <div className="blog-article header-article">
+                  <div className="blog-big__title">{post.category}</div>
+                  <div className="blog-menu small-title date">{post.datePublished}</div>
+                </div>
+                <div className="blog-article">
+                  <img src={post.coverImg.url}
+                    alt="" />
+                  <h2>{post.title}
+                  </h2>
+                  <div className="blog-detail">
+                    <span>By {post.author.name}</span>
+                    <span>{post.time}</span>
+
+                  </div>
+
+                  <p>{post.description}</p>
+                  <a href={'/posts/' + post.id}>
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="feather feather-corner-down-right" viewBox="0 0 24 24">
+                      <path d="M15 10l5 5-5 5" />
+                      <path d="M4 4v7a4 4 0 004 4h12" />
+                    </svg>
+                    See More
+                  </a>
+                </div>
+              </div>)
+          })}
         </div>
         <div className="blog-part right-blog">
           <marquee width="100%" direction="left">
