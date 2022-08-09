@@ -1,4 +1,6 @@
 import { GraphQLClient, gql } from 'graphql-request'
+import Menu from "../../components/menu"
+
 const client = new GraphQLClient("https://api-ap-northeast-1.hygraph.com/v2/cl6lsx6ia0y7l01ulhpjshdti/master")
 
 const IDLIST = gql`
@@ -49,13 +51,29 @@ export async function getStaticProps ({ params }) {
 }
 
 export default function Post ({ post }) {
-  return <div className='blog'>
-    <p>{post.title}</p>
-    <p>{post.datePublished}</p>
-    <p>By{post.author.name}</p>
-    <img src={post.coverImg.url} alt="" />
-    <p dangerouslySetInnerHTML={{ __html: post.content.html }}>
+  if (!post) {
+    return <div>loading...</div>
+  }
 
-    </p>
-  </div>
+  return (
+    <div className="blog-wrapper">
+      <div className="blog">
+        <Menu />
+        <div className="blog-content">
+          <div className="title">{post.title}</div>
+
+          <div className="blog-author">
+            <img src={post.author.avatar.url} alt="" />
+            <div>
+              <div className="date">{post.datePublished}</div>
+              <div>By {post.author.name}</div>
+            </div>
+          </div>
+
+          <p dangerouslySetInnerHTML={{ __html: post.content.html }}></p>
+
+        </div>
+      </div>
+    </div>
+  )
 }
