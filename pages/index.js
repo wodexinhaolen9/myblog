@@ -1,8 +1,43 @@
 import Head from 'next/head'
 import Image from 'next/image'
 import styles from '../styles/Home.module.css'
+import { GraphQLClient, gql } from 'graphql-request'
 
-export default function Home () {
+const client = new GraphQLClient("https://api-ap-northeast-1.hygraph.com/v2/cl6lsx6ia0y7l01ulhpjshdti/master")
+const QUERY = gql`{
+  posts{
+    id,
+    title,
+    category,
+    description,
+    content{
+      html
+    },
+    time,
+    author{
+      name,
+      avatar{
+        url
+      }
+    }
+    coverImg{
+      url
+    }
+  }
+}
+`
+
+export async function getStaticProps () {
+  const { posts } = await client.request(QUERY)
+  return {
+    props: {
+      posts
+    }
+  }
+}
+
+export default function Home (posts) {
+  console.log('posts', posts)
   return (
     <div className={styles.container}>
       <Head>
